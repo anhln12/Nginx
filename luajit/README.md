@@ -196,4 +196,147 @@ case "$1" in
         exit 2
 esac
 ```
+Add nginx vào systemctl và restart
+```
+/etc/init.d/nginx status
+Sẽ lỗi: Unit nginx.service could not be found.
+--
+systemctl daemon-reload
+/etc/init.d/nginx restart
+```
+
+Bước4 : Cấu hình log Header/Body
+```
+#user  nobody;
+worker_processes  auto;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+log_format log_req_resp '$remote_addr - $remote_user [$time_local] '
+' "$request" $status $body_bytes_sent ${request_time}ms '
+'| PRINT_REQUEST_BODY: $request_body '
+'| PRINT_REQUEST_HEADER:"$req_header" '
+'| PRINT_RESPONSE_HEADER:"$resp_header" '
+'| PRINT_RESPONSE_BODY:"$resp_body" ';
+                      
+    access_log  logs/access.log log_req_resp;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+#Cấu hình web_server listen Port_80
+    server {
+        listen       80;
+        server_name  _;
+	
+	#Step1: Test Lua Sum
+	location /sum {
+	   content_by_lua_block {
+	     local args = ngx.req.get_uri_args();
+	     ngx.say(args.a + args.b)
+	  }
+	}
+
+
+
+    location / {
+       	#Step2: Config REPSONSE_BODY
+       	lua_need_request_body on;
+      
+       	set $resp_body "";
+       	body_filter_by_lua '
+       	  local resp_body = string.sub(ngx.arg[1], 1, 1000)
+       	  ngx.ctx.buffered = (ngx.ctx.buffered or "") .. resp_body
+       	  if ngx.arg[2] then
+       	     ngx.var.resp_body = ngx.ctx.buffered
+       	  end
+       	';
+      
+       	#Step3: Config REQUEST_HEADER, RESPONSE_HEADER
+       	set $req_header "";
+       	set $resp_header "";
+       	header_filter_by_lua ' 
+       	  local h = ngx.req.get_headers()
+       	  for k, v in pairs(h) do
+       	      ngx.var.req_header = ngx.var.req_header .. k.."="..v.." "
+       	  end
+       	  local rh = ngx.resp.get_headers()
+       	  for k, v in pairs(rh) do
+       	      ngx.var.resp_header = ngx.var.resp_header .. k.."="..v.." "
+       	  end
+       	';		
+        
+        	proxy_pass http://localhost:8080/;	  # ở đây tôi proxy vào 1 con tomcat8 test     
+        }
+
+
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+}
+```
+Kiểm tra test lại nginx
+```
+[root@localhost nginx]# nginx -t
+nginx: the configuration file /opt/nginx/nginx.conf syntax is ok
+nginx: configuration file /opt/nginx/nginx.conf test is successful 
+
+[root@localhost opt]# /etc/init.d/nginx reload
+Reloading nginx configuration (via systemctl):             [  OK  ]
+```
+Bước: Test POST chả hạn
+```
+[root@localhost ROOT]# curl -X POST  -H "Host:tuanduong122.wordpress.com" -H "Tuanda:hehehe" -d '{"DUONGANHTUAN_BODY":"123"}' localhost
+Kết quả: APACHE TOMCAT8 BODY
+```
+Đọc logs access
+```
+tail /opt/nginx/logs/access.log
+127.0.0.1 - - [24/Apr/2020:19:04:26 -0400]  "POST / HTTP/1.1" 200 20 0.346ms | PRINT_REQUEST_BODY: {\x22DUONGANHTUAN_BODY\x22:\x22123\x22} | PRINT_REQUEST_HEADER:"host=tuanduong122.wordpress.com content-type=application/x-www-form-urlencoded tuanda=hehehe accept=*/* content-length=27 user-agent=curl/7.29.0 " | PRINT_RESPONSE_HEADER:"content-length=20 set-cookie=JSESSIONID=C94254D1F47723462F60222FE865D9FB; Path=/; HttpOnly content-type=text/html;charset=ISO-8859-1 connection=keep-alive " | PRINT_RESPONSE_BODY:"APACHE TOMCAT8 BODY\x0A"
+```
+Phân tích Kết quả:
+
+PRINT_REQUEST_BODY: {\x22DUONGANHTUAN_BODY\x22:\x22123\x22}
+
+PRINT_REQUEST_HEADER:"host=tuanduong122.wordpress.com content-type=application/x-www-form-urlencoded tuanda=hehehe accept=/ content-length=27 user-agent=curl/7.29.0 "
+
+PRINT_RESPONSE_HEADER:"content-length=20 set-cookie=JSESSIONID=C94254D1F47723462F60222FE865D9FB; Path=/; HttpOnly content-type=text/html;charset=ISO-8859-1 connection=keep-alive "
+
+PRINT_RESPONSE_BODY:"APACHE TOMCAT8 BODY\x0A"
+
+Lua Show Request Body as Response
+```
+     location = /request_body {
+         client_max_body_size 50k;
+         client_body_buffer_size 50k;
+
+         content_by_lua_block {
+             ngx.req.read_body()  -- explicitly read the req body
+             local data = ngx.req.get_body_data()
+             if data then
+                 ngx.say("body data:")
+                 ngx.print(data)
+                 return
+             end
+
+             -- body may get buffered in a temp file:
+             local file = ngx.req.get_body_file()
+             if file then
+                 ngx.say("body is in file ", file)
+             else
+                 ngx.say("no body found")
+             end
+         }
+     }
+```
+Lua_Nginx : https://github.com/openresty/lua-nginx-module
 
