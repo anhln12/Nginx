@@ -25,7 +25,9 @@ Ubuntu 12.04, 14.04, 16.04, 17.04, 17.10
 Debian 7, 8, 9
 Amazon Linux 2017.09, Gentoo Linux (phiên bản Experimental Ebuild)
 Chỉ hoạt động với Python 2.6, 2.7 và chưa hỗ trợ Python 3.0.
+
 1.1. Đăng kí tài khoản Nginx Amplify
+
 Làm theo các bước sau để đăng kí tài khoản.
 
 Truy cập trang đăng kí Amplify Sign Up: https://amplify.nginx.com/dashboard
@@ -34,6 +36,7 @@ Tại cửa sổ tiếp theo, bạn cung cấp thêm một số thông tin về 
 Như vậy, bạn đã hoàn tất đăng kí. Lưu ý, Nginx Amplify sẽ bắt đầu giám sát hệ thống của bạn khi và chỉ khi bạn cài đặt thành công Amplify Agent trên mỗi server và kết nối thông qua API.
 
 1.2. Cài đặt NGINX Amplify Agent trên hệ thống
+
 Công cụ thu thập dữ liệu về hoạt động hệ thống thông qua việc cài đặt Nginx Amplify Agent.
 
 Click vào biểu tượng +New System góc trên bên trái sau khi login bạn sẽ thấy hướng dẫn cài đặt Agent lên hệ thống của mình. Ví dụ như trong hình:
@@ -53,6 +56,7 @@ service amplify-agent restart
 ```
 2. Cài đặt nâng cao
 2.1. Thông số Stub Status
+
 Quy trở lại website, nhân nút Continue để đến bước 2, cấu hình stub_status
 ![Uploading image.png…]()
 
