@@ -3,14 +3,14 @@ Nginx Amplify là công cụ tuyệt vời giúp giám sát tình trạng NGINX 
 Nội dung bài viết:
 
 1. Cài đặt Nginx Amplify
-2. 	1.1. Đăng kí tài khoản Nginx Amplify
+   	1.1. Đăng kí tài khoản Nginx Amplify
    	1.2. Cài đặt NGINX Amplify Agent trên hệ thống
 
-4. Cài đặt nâng cao
+2. Cài đặt nâng cao
 	2.1 Thông số Stub Status
 	2.2. Thông số Log.
 
-5. Sử dụng Nginx Amplify
+3. Sử dụng Nginx Amplify
 
 	3.1. Graphs - Đồ thị giám sát
 	3.2. Dashboard - Bảng giám sát, điều khiển
@@ -49,7 +49,9 @@ Click vào biểu tượng +New System góc trên bên trái sau khi login bạn
 - Chạy lệnh cài đặt Amplify Agent
 
 Nếu không có vấn đề gì xảy ra, bạn sẽ nhận được thông báo cài đặt thành công như bên dưới:
+
 <img width="329" alt="image" src="https://github.com/anhln12/nginx/assets/18412583/f038dfb4-bcf4-4763-a162-bd0fa472333b">
+
 Bạn chờ 1 vài phút sẽ thấy hệ thống hiển thị trên khu vực Systems & các đồ thị ở mục Graphs.
 
 ```
