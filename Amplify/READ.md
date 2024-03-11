@@ -40,11 +40,13 @@ Như vậy, bạn đã hoàn tất đăng kí. Lưu ý, Nginx Amplify sẽ bắt
 Công cụ thu thập dữ liệu về hoạt động hệ thống thông qua việc cài đặt Nginx Amplify Agent.
 
 Click vào biểu tượng +New System góc trên bên trái sau khi login bạn sẽ thấy hướng dẫn cài đặt Agent lên hệ thống của mình. Ví dụ như trong hình:
+
 <img width="358" alt="image" src="https://github.com/anhln12/nginx/assets/18412583/f441c000-57a7-45f9-92ba-92f5b3ce51ed">
 
-Kết nối SSH đến server
-Sử dụng curl hoặc wget để download script install (trước đó nên chuyển về thư mục gốc cd /root)
-Chạy lệnh cài đặt Amplify Agent
+- Kết nối SSH đến server
+- Sử dụng curl hoặc wget để download script install (trước đó nên chuyển về thư mục gốc cd /root)
+- Chạy lệnh cài đặt Amplify Agent
+
 Nếu không có vấn đề gì xảy ra, bạn sẽ nhận được thông báo cài đặt thành công như bên dưới:
 <img width="329" alt="image" src="https://github.com/anhln12/nginx/assets/18412583/f038dfb4-bcf4-4763-a162-bd0fa472333b">
 Bạn chờ 1 vài phút sẽ thấy hệ thống hiển thị trên khu vực Systems & các đồ thị ở mục Graphs.
@@ -58,6 +60,26 @@ service amplify-agent restart
 2.1. Thông số Stub Status
 
 Quy trở lại website, nhân nút Continue để đến bước 2, cấu hình stub_status
-![Uploading image.png…]()
+
+<img width="389" alt="image" src="https://github.com/anhln12/nginx/assets/18412583/1443d109-7afe-4de8-9259-c193324a31de">
+
+
+Create a new file with the stub_status configuration
+```
+cat > conf.d/stub_status.conf
+
+server {
+	listen 127.0.0.1:80;
+	server_name 127.0.0.1;
+	location /nginx_status {
+		stub_status on;
+		allow 127.0.0.1;
+		deny all;
+	}
+}
+```
+
+
+
 
 
