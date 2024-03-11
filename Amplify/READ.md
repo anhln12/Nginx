@@ -7,18 +7,18 @@ Nội dung bài viết:
 1.2. Cài đặt NGINX Amplify Agent trên hệ thống
 
 2. Cài đặt nâng cao
-2.1 Thông số Stub Status
-2.2. Thông số Log.
+	2.1 Thông số Stub Status
+	2.2. Thông số Log.
 
-3. Sử dụng Nginx Amplify
+4. Sử dụng Nginx Amplify
 
-3.1. Graphs - Đồ thị giám sát
+	3.1. Graphs - Đồ thị giám sát
 
-3.2. Dashboard - Bảng giám sát, điều khiển
+	3.2. Dashboard - Bảng giám sát, điều khiển
 
-3.3. Analyzer - Báo cáo về thiết lập hệ thống
+	3.3. Analyzer - Báo cáo về thiết lập hệ thống
 
-3.4. Alerts - Cảnh báo hệ thống
+	3.4. Alerts - Cảnh báo hệ thống
 
 1. Cài đặt Nginx Amplify
 Yêu cầu hệ thống cho Nginx Amplify:
